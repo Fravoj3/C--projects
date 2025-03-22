@@ -1,0 +1,14 @@
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\bin\Debug\net8.0\cviceni_tridy.exe
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\bin\Debug\net8.0\cviceni_tridy.deps.json
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\bin\Debug\net8.0\cviceni_tridy.runtimeconfig.json
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\bin\Debug\net8.0\cviceni_tridy.dll
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\bin\Debug\net8.0\cviceni_tridy.pdb
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\obj\Debug\net8.0\cviceni_tridy.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\obj\Debug\net8.0\cviceni_tridy.AssemblyInfoInputs.cache
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\obj\Debug\net8.0\cviceni_tridy.AssemblyInfo.cs
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\obj\Debug\net8.0\cviceni_tridy.csproj.CoreCompileInputs.cache
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\obj\Debug\net8.0\cviceni_tridy.dll
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\obj\Debug\net8.0\refint\cviceni_tridy.dll
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\obj\Debug\net8.0\cviceni_tridy.pdb
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\obj\Debug\net8.0\cviceni_tridy.genruntimeconfig.cache
+C:\Users\fravo\Documents\C# projects\cviceni_tridy\obj\Debug\net8.0\ref\cviceni_tridy.dll

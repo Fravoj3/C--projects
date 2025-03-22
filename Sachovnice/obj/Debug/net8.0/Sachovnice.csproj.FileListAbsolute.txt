@@ -1,0 +1,14 @@
+C:\Users\fravo\Documents\C# projects\Sachovnice\bin\Debug\net8.0\Sachovnice.exe
+C:\Users\fravo\Documents\C# projects\Sachovnice\bin\Debug\net8.0\Sachovnice.deps.json
+C:\Users\fravo\Documents\C# projects\Sachovnice\bin\Debug\net8.0\Sachovnice.runtimeconfig.json
+C:\Users\fravo\Documents\C# projects\Sachovnice\bin\Debug\net8.0\Sachovnice.dll
+C:\Users\fravo\Documents\C# projects\Sachovnice\bin\Debug\net8.0\Sachovnice.pdb
+C:\Users\fravo\Documents\C# projects\Sachovnice\obj\Debug\net8.0\Sachovnice.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\fravo\Documents\C# projects\Sachovnice\obj\Debug\net8.0\Sachovnice.AssemblyInfoInputs.cache
+C:\Users\fravo\Documents\C# projects\Sachovnice\obj\Debug\net8.0\Sachovnice.AssemblyInfo.cs
+C:\Users\fravo\Documents\C# projects\Sachovnice\obj\Debug\net8.0\Sachovnice.csproj.CoreCompileInputs.cache
+C:\Users\fravo\Documents\C# projects\Sachovnice\obj\Debug\net8.0\Sachovnice.dll
+C:\Users\fravo\Documents\C# projects\Sachovnice\obj\Debug\net8.0\refint\Sachovnice.dll
+C:\Users\fravo\Documents\C# projects\Sachovnice\obj\Debug\net8.0\Sachovnice.pdb
+C:\Users\fravo\Documents\C# projects\Sachovnice\obj\Debug\net8.0\Sachovnice.genruntimeconfig.cache
+C:\Users\fravo\Documents\C# projects\Sachovnice\obj\Debug\net8.0\ref\Sachovnice.dll

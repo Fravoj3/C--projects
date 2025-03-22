@@ -1,0 +1,14 @@
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\bin\Debug\net8.0\SlevaniNadoby.exe
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\bin\Debug\net8.0\SlevaniNadoby.deps.json
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\bin\Debug\net8.0\SlevaniNadoby.runtimeconfig.json
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\bin\Debug\net8.0\SlevaniNadoby.dll
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\bin\Debug\net8.0\SlevaniNadoby.pdb
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\obj\Debug\net8.0\SlevaniNadoby.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\obj\Debug\net8.0\SlevaniNadoby.AssemblyInfoInputs.cache
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\obj\Debug\net8.0\SlevaniNadoby.AssemblyInfo.cs
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\obj\Debug\net8.0\SlevaniNadoby.csproj.CoreCompileInputs.cache
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\obj\Debug\net8.0\SlevaniNadoby.dll
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\obj\Debug\net8.0\refint\SlevaniNadoby.dll
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\obj\Debug\net8.0\SlevaniNadoby.pdb
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\obj\Debug\net8.0\SlevaniNadoby.genruntimeconfig.cache
+C:\Users\fravo\Documents\C# projects\SlevaniNadoby\obj\Debug\net8.0\ref\SlevaniNadoby.dll

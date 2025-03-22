@@ -1,0 +1,21 @@
+
+ Vstupní data pro simulaci obchodního domu
+ =========================================
+ 
+ Oddělení: 
+ =========
+    jméno          patro     rychlost obsluhy
+    -----------------------------------------
+O   papírnictví      0          5
+O   potraviny        0         15
+O   drogerie         0          6
+O   textil           1         15
+O   nábytek          2         20
+O   elektronika      3          5
+O   CD-DVD           3          4 
+
+ Výtah:
+ ======
+    jméno          kapacita  doba nastoupení    doba vystoupení   doba jízdy z patra do patra
+    -----------------------------------------------------------------------------------------
+V   elefant          10            1                    1                    1

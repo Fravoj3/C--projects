@@ -1,0 +1,14 @@
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\bin\Debug\net8.0\SimulaceObchod.exe
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\bin\Debug\net8.0\SimulaceObchod.deps.json
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\bin\Debug\net8.0\SimulaceObchod.runtimeconfig.json
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\bin\Debug\net8.0\SimulaceObchod.dll
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\bin\Debug\net8.0\SimulaceObchod.pdb
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\obj\Debug\net8.0\SimulaceObchod.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\obj\Debug\net8.0\SimulaceObchod.AssemblyInfoInputs.cache
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\obj\Debug\net8.0\SimulaceObchod.AssemblyInfo.cs
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\obj\Debug\net8.0\SimulaceObchod.csproj.CoreCompileInputs.cache
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\obj\Debug\net8.0\SimulaceObchod.dll
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\obj\Debug\net8.0\refint\SimulaceObchod.dll
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\obj\Debug\net8.0\SimulaceObchod.pdb
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\obj\Debug\net8.0\SimulaceObchod.genruntimeconfig.cache
+C:\Users\fravo\Documents\C# projects\SimulaceObchod\obj\Debug\net8.0\ref\SimulaceObchod.dll
