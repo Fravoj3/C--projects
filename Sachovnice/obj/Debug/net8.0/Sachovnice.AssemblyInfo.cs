@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Sachovnice")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+22c6637939bd25914e972c49b490fe51d39fea92")]
 [assembly: System.Reflection.AssemblyProductAttribute("Sachovnice")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Sachovnice")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

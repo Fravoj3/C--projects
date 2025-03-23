@@ -33,11 +33,6 @@ namespace simulace
         public void Pridej(int kdy, Proces kdo, TypUdalosti co)
         {
             //Console.WriteLine("PLAN: {0} {1} {2}", kdy, kdo.ID, co);
-            // pro hledani chyby:
-            foreach (Udalost ud in seznam)
-                if (ud.kdo == kdo)
-                    Console.WriteLine("");
-
 
             seznam.Add(new Udalost(kdy, kdo, co));
         }
@@ -84,11 +79,63 @@ namespace simulace
         protected Model model;
     }
 
+    public class Cas{
+        private ModelStatistikaTriDruhu model;
+        public Cas(ModelStatistikaTriDruhu model){
+            this.model = model;
+        }
+        public int obsluhovan = 0;
+        public int veFronteObchodu = 0;
+        public int veFronteVytahu = 0;
+        public int posledniCasKonce = 0;
+        public enum Stav{
+            CekaNaVytah,
+            CekaNaObsluhu,
+            Obsluhovany, 
+            Nevesel
+        }
+        public Stav stav = Stav.Nevesel;
+        public void skonciAkci(){
+            if (stav == Stav.Obsluhovany){
+                int delka = model.Cas - posledniCasKonce;
+                obsluhovan += delka;
+            }
+            if(stav == Stav.CekaNaVytah){
+                int delka = model.Cas - posledniCasKonce;
+                veFronteVytahu += delka;
+            }
+            if(stav == Stav.CekaNaObsluhu){
+                int delka = model.Cas - posledniCasKonce;
+                veFronteObchodu += delka;
+            }
+            posledniCasKonce = model.Cas;
+        }
+        public int celkovyCas(){
+            return obsluhovan + veFronteObchodu + veFronteVytahu;
+        }
+        public void prictiCas(Cas cas){
+            obsluhovan += cas.obsluhovan;
+            veFronteObchodu += cas.veFronteObchodu;
+            veFronteVytahu += cas.veFronteVytahu;
+        }
+        public void spocitejPrumer(int pocetZakazniku){
+            if (pocetZakazniku == 0)
+                return;
+            obsluhovan = obsluhovan / pocetZakazniku;
+            veFronteObchodu = veFronteObchodu / pocetZakazniku;
+            veFronteVytahu = veFronteVytahu / pocetZakazniku;
+        }
+        public void odectiCas(Cas kOdecteni){
+            obsluhovan -= kOdecteni.obsluhovan;
+            veFronteObchodu -= kOdecteni.veFronteObchodu;
+            veFronteVytahu -= kOdecteni.veFronteVytahu;
+        }
+    }
     public class Oddeleni : Proces
-    {
-        private int rychlost;
-        private List<Zakaznik> fronta;
-        private bool obsluhuje;
+    {        
+        public int rychlost;
+        public List<Zakaznik> fronta;
+        public bool obsluhuje;
 
         public Oddeleni(Model model, string popis)
         {
@@ -108,9 +155,18 @@ namespace simulace
             fronta.Add(zak);
             log("do fronty " + zak.ID);
 
-            if (obsluhuje) ; // nic
+            if (obsluhuje){
+                if (zak is ZakaznikTriDruhu zakTriDruhu)
+                {
+                    zakTriDruhu.cas.stav = Cas.Stav.CekaNaObsluhu;
+                }
+            } // nic
             else
             {
+                if (zak is ZakaznikTriDruhu zakTriDruhu)
+                {
+                    zakTriDruhu.cas.stav = Cas.Stav.Obsluhovany;
+                }
                 obsluhuje = true;
                 model.Naplanuj(model.Cas, this, TypUdalosti.Start);
             }
@@ -132,6 +188,10 @@ namespace simulace
                         fronta.RemoveAt(0);
                         model.Odplanuj(zak, TypUdalosti.Trpelivost);
                         model.Naplanuj(model.Cas + rychlost, zak, TypUdalosti.Obslouzen);
+                        if (zak is ZakaznikTriDruhu zakTriDruhu)
+                        {
+                            zakTriDruhu.cas.stav = Cas.Stav.Obsluhovany;
+                        }
                         model.Naplanuj(model.Cas + rychlost, this, TypUdalosti.Start);
                     }
                     break;
@@ -167,6 +227,21 @@ namespace simulace
         private List<Pasazer> naklad;   // pasazeri ve vytahu
         private SmeryJizdy smer;
         private int kdyJsemMenilSmer;
+
+        public int jakAsiDlouhoPojeduVytahem(int odkud, int kam)
+        {
+            int lidiVeFronte = 0;
+            for (int i = 0; i < 2; ++i){
+                lidiVeFronte += cekatele[odkud, i].Count;
+            }
+            int dobaObsluhyJedneSkupinyMax = (dobaNastupu + dobaVystupu + dobaPatro2Patro) * model.MaxPatro  * 2;
+            int asiOcekavanaDobaObsluhySkupiny = (int) ((double)dobaObsluhyJedneSkupinyMax * 1.7);
+            int pocetSkupinPredSebou = lidiVeFronte / kapacita;
+            int casNezSeDostanuNaRadu = pocetSkupinPredSebou * asiOcekavanaDobaObsluhySkupiny;
+
+            int casMeJizdyAsi = dobaNastupu + dobaVystupu + dobaPatro2Patro * Math.Abs(odkud - kam);
+            return casNezSeDostanuNaRadu + casMeJizdyAsi;
+        }
 
         public void PridejDoFronty(int odkud, int kam, Proces kdo)
         {
@@ -341,9 +416,9 @@ namespace simulace
     }
     public class Zakaznik : Proces
     {
-        private int trpelivost;
-        private int prichod;
-        private List<string> Nakupy;
+        protected int trpelivost;
+        protected int prichod;
+        protected List<string> Nakupy;
         int pocetNakupu = 0;
         public Zakaznik(Model model, string popis)
         {
@@ -418,12 +493,141 @@ namespace simulace
             }
         }
 
-        private Oddeleni OddeleniPodleJmena(string kamChci)
+        protected Oddeleni OddeleniPodleJmena(string kamChci)
         {
             foreach (Oddeleni odd in model.VsechnaOddeleni)
                 if (odd.ID == kamChci)
                     return odd;
             return null;
+        }
+    }
+
+    public class ZakaznikTriDruhu : Zakaznik
+    {
+        int typ;
+        public Cas cas;
+        new ModelStatistikaTriDruhu model;
+
+        Oddeleni chciNavstivit;
+        public ZakaznikTriDruhu(ModelStatistikaTriDruhu model, string popis, int typZakaznika): base(model, popis)
+        {
+            this.typ = typZakaznika;
+            this.model = model;
+            this.chciNavstivit = null;
+            this.cas = new Cas(this.model);
+        }
+        public Oddeleni ziskejOddeleniVPatre(int patro){
+            for(int i = 0; i < Nakupy.Count; i++){
+                Oddeleni odd = OddeleniPodleJmena(Nakupy[i]);
+                if (odd.patro == patro)
+                    return odd;
+            }
+            return null;
+        }
+
+        public Oddeleni ziskejNejrychlejsiOddeleni(){
+            int nejkratsiCekani = int.MaxValue;
+            Oddeleni nejrychlejsi = null;
+            for(int i = 0; i < Nakupy.Count; ++i){
+                Oddeleni odd = OddeleniPodleJmena(Nakupy[i]);
+                int cekaniUOddeleni = odd.fronta.Count * odd.rychlost;
+                int casNaVytah = 0;
+                if (odd.patro != patro){
+                    casNaVytah = model.vytah.jakAsiDlouhoPojeduVytahem(patro, odd.patro);
+                }
+                int doba = cekaniUOddeleni + casNaVytah;
+                if (doba < nejkratsiCekani){
+                    nejkratsiCekani = doba;
+                    nejrychlejsi = odd;
+                }
+            }
+            return nejrychlejsi;
+        }
+
+        public Oddeleni ziskejOddeleniPodleTypuZakaznika(){
+            if (typ == 1)
+                return OddeleniPodleJmena(Nakupy[0]);
+            if (typ == 2){
+                Oddeleni kamChci = ziskejOddeleniVPatre(patro);
+                if (kamChci == null)
+                    kamChci = OddeleniPodleJmena(Nakupy[0]);
+                return kamChci;
+            }
+            if (typ == 0){
+                return ziskejNejrychlejsiOddeleni();
+            }
+            return null;
+        }
+        
+        public void odstranZeSeznamu(Oddeleni odd){
+            if (odd == null)
+                Console.WriteLine("ziskal null jako oddeleni k odstraneni");
+            for (int i = 0; i < Nakupy.Count; i++){
+                if (Nakupy[i] == odd.ID){
+                    Nakupy.RemoveAt(i);
+                    return;
+                }
+            }
+        }
+        public override void Zpracuj(Udalost ud)
+        {
+            switch (ud.co)
+            {
+                case TypUdalosti.Start:
+                    cas.skonciAkci();
+                    if (Nakupy.Count == 0)
+                    // ma nakoupeno
+                    {
+                        if (patro == 0){
+                            log("-------------- odchází"); // nic, konci
+                            int stravenyCas = model.Cas - prichod;
+                            model.prictiStravenyCas(stravenyCas, typ, this.cas);
+                            //Console.WriteLine("Zákazník {0} strávil v obchodě {1} minut a navstivil {2} obchodu", ID, stravenyCas, pocetNakupu);
+                        }
+                        else{ 
+                            model.vytah.PridejDoFronty(patro, 0, this);
+                            cas.stav = Cas.Stav.CekaNaVytah;
+                        }
+                    }
+                    else
+                    {
+                        if (cas.stav == Cas.Stav.Nevesel){
+                            cas.posledniCasKonce = model.Cas;
+                        }
+                        Oddeleni odd = ziskejOddeleniPodleTypuZakaznika();
+                        chciNavstivit = odd;
+                        int pat = odd.patro;
+                        if (pat == patro) // to oddeleni je v patre, kde prave jsem
+                        {
+                            if (Nakupy.Count > 1)
+                                model.Naplanuj(model.Cas + trpelivost, this, TypUdalosti.Trpelivost);
+                            odd.ZaradDoFronty(this);
+                        }
+                        else{ 
+                            cas.stav = Cas.Stav.CekaNaVytah;
+                            model.vytah.PridejDoFronty(patro, pat, this);
+                        }
+                    }
+                    break;
+                case TypUdalosti.Obslouzen:
+                    odstranZeSeznamu(chciNavstivit);
+                    // ...a budu hledat dalsi nakup -->> Start
+                    model.Naplanuj(model.Cas, this, TypUdalosti.Start);
+                    break;
+                case TypUdalosti.Trpelivost:
+                    // vyradit z fronty:
+                    {
+                        chciNavstivit.VyradZFronty(this);
+                    }
+
+                    // prehodit tenhle nakup na konec:
+                    odstranZeSeznamu(chciNavstivit);
+                    Nakupy.Add(chciNavstivit.ID);
+
+                    // ...a budu hledat dalsi nakup -->> Start
+                    model.Naplanuj(model.Cas, this, TypUdalosti.Start);
+                    break;
+            }
         }
     }
 
@@ -443,7 +647,7 @@ namespace simulace
         {
             kalendar.Odeber(kdo, co);
         }
-        public void VytvorProcesy()
+        public virtual void VytvorProcesy()
         {
             System.IO.StreamReader soubor
                 = new
@@ -490,8 +694,8 @@ namespace simulace
 
     public class ModelStatistika:Model
     {
-        private Random random = new Random(12345);
-        private bool nactenaKonfiguraceObchodu = false;
+        protected Random random = new Random(12345);
+        protected bool nactenaKonfiguraceObchodu = false;
 
         public int soucetDobyNavstevniku = 0;
 
@@ -520,7 +724,7 @@ namespace simulace
             soubor.Close();
             nactenaKonfiguraceObchodu = true;
         }
-        public void VytvorProcesy(int pocetZakazniku)
+        public virtual void VytvorProcesy(int pocetZakazniku)
         {
             // Nacti konfiguraci obchodu
             if (!nactenaKonfiguraceObchodu)
@@ -591,16 +795,144 @@ namespace simulace
         }
     }
 
+    public class ModelStatistikaTriDruhu:ModelStatistika
+    {
+        public void InitializeModelStatistikaTriDruhu(){
+            resetCas();
+        }
+        public void resetCas(){
+            for (int i = 0; i < 3; i++){
+                soucetDobyNavstevyTypu = getEmptyCas();
+            }
+        }
+        public Cas[] getEmptyCas(){
+            Cas[] casy = new Cas[3];
+            for (int i = 0; i < 3; i++){
+                casy[i] = new Cas(this);
+            }
+            return casy;
+        }
+        Cas[] soucetDobyNavstevyTypu = new simulace.Cas[3];
+        int[] pocetZakaznikuTypu = {0, 0, 0};
+        public void prictiStravenyCas(int cas, int typ){
+            //this.soucetDobyNavstevyTypu[typ] += cas;
+            this.pocetZakaznikuTypu[typ]++;
+        }
+        public void prictiStravenyCas(int cas, int typ, Cas casObj){
+            this.soucetDobyNavstevyTypu[typ].prictiCas(casObj);
+            this.pocetZakaznikuTypu[typ]++;
+        }
+        public override void VytvorProcesy(int pocetZakazniku)
+        {
+            // Nacti konfiguraci obchodu
+            if (!nactenaKonfiguraceObchodu)
+                base.nactiKonfiguraciObchodu();
+            // Vygenerovani zakazniku
+            for (int i = 0; i < pocetZakazniku; i++)
+            {
+                int CasPrichodu = random.Next(0, 601);
+                int trpevilost = random.Next(1, 181);
+                int pocetNakupu = random.Next(1, 21);
+                int typZakaznika = (i+1)%3;
+                string oddeleniKNavsteve = "";
+                int pocetOddeleni = base.VsechnaOddeleni.Count;
+                for (int j = 0; j < pocetNakupu; j++)
+                {
+                    int idOddeleni = random.Next(0, pocetOddeleni);
+                    if (j != 0){
+                        oddeleniKNavsteve += " ";
+                    }
+                    oddeleniKNavsteve += base.VsechnaOddeleni[idOddeleni].ID;
+                }
+                new ZakaznikTriDruhu(this, i+" "+CasPrichodu+" "+trpevilost+" "+oddeleniKNavsteve, typZakaznika);
+            }
+
+        }
+        public new Cas[] Vypocet(int pocetZakazniku)
+        {
+            Cas = 0;
+            soucetDobyNavstevniku = 0;
+            resetCas();
+            pocetZakaznikuTypu = new int[] {0, 0, 0};
+            kalendar = new Kalendar();
+            VytvorProcesy(pocetZakazniku);
+
+            Udalost ud;
+
+            while ((ud = kalendar.Vyber()) != null)
+            {
+                Cas = ud.kdy;
+                ud.kdo.Zpracuj(ud);
+            }
+
+            soucetDobyNavstevyTypu[0].spocitejPrumer(pocetZakaznikuTypu[0]);
+            soucetDobyNavstevyTypu[1].spocitejPrumer(pocetZakaznikuTypu[1]);
+            soucetDobyNavstevyTypu[2].spocitejPrumer(pocetZakaznikuTypu[2]);
+            
+            return soucetDobyNavstevyTypu;
+        }
+    
+        public new Cas[] PrumerProDanyPocetZakazniku(int pocetZakazniku){
+            int[] minimum = {int.MaxValue, int.MaxValue, int.MaxValue};
+            Cas[] minimumC = getEmptyCas();
+            int[] maximum = {int.MinValue, int.MinValue, int.MinValue};
+            Cas[] maximumC = getEmptyCas();
+            Cas[] soucty = getEmptyCas();
+            for (int i = 0; i < 10; i++){
+                Cas[] prumery = Vypocet(pocetZakazniku);
+                for (int j = 0; j < 3; j++){
+                    soucty[j].prictiCas(prumery[j]);
+                }
+                for (int j = 0; j < 3; j++){
+                    if (prumery[j].celkovyCas() < minimum[j]){
+                        minimum[j] = prumery[j].celkovyCas();
+                        minimumC[j] = prumery[j];
+                    }
+                    if (prumery[j].celkovyCas() > maximum[j]){
+                        maximum[j] = prumery[j].celkovyCas();
+                        maximumC[j] = prumery[j];
+                    }
+                }
+            }
+            for (int j = 0; j < 3; j++){
+                soucty[j].odectiCas(minimumC[j]);
+                soucty[j].odectiCas(maximumC[j]);
+                soucty[j].spocitejPrumer(8);
+            }
+            return soucty;
+        }
+    
+        public new Cas[][] VypocitejPrumerProRozsahZakazniku(int minimálníZkoumanýPočet, int maximálníZkoumanýPočet){
+            bool log = true;
+            int procento = 0;
+            Cas[][] prumery = new Cas[maximálníZkoumanýPočet - minimálníZkoumanýPočet + 1][];
+            for (int i = 0; i <= maximálníZkoumanýPočet - minimálníZkoumanýPočet; i++){
+                prumery[i] = PrumerProDanyPocetZakazniku(i+1);
+                int procentoNove = (int)((double)(i) / (maximálníZkoumanýPočet - minimálníZkoumanýPočet) * 100);
+                if (procentoNove > procento){
+                    procento = procentoNove;
+                    if (log)
+                        Console.Write("\r{0}%   ", procento);
+                }
+            }
+            Console.WriteLine();
+            return prumery;
+        }
+    }
+
     class Program
     {
         static void Main(string[] args)
         {
-            ModelStatistika model = new ModelStatistika();
+            ModelStatistikaTriDruhu model = new ModelStatistikaTriDruhu();
             int dolniPocetZakazniku = 1;
-            int[] vysledek = model.VypocitejPrumerProRozsahZakazniku(dolniPocetZakazniku, 501);
+            Cas[][] vysledek = model.VypocitejPrumerProRozsahZakazniku(dolniPocetZakazniku, 100);
             //Console.ReadLine();
             for (int i = 0; i < vysledek.Length; i++){
-                Console.WriteLine((dolniPocetZakazniku + i) +"\t"+vysledek[i]);
+                Cas druh1 = vysledek[i][1];
+                Cas druh2 = vysledek[i][2];
+                Cas druh3 = vysledek[i][0];
+                Console.WriteLine($"{dolniPocetZakazniku + i}\t{druh1.celkovyCas()}\t{druh1.obsluhovan}\t{druh1.veFronteObchodu}\t{druh1.veFronteVytahu}\t{druh2.celkovyCas()}\t{druh2.obsluhovan}\t{druh2.veFronteObchodu}\t{druh2.veFronteVytahu}\t{druh3.celkovyCas()}\t{druh3.obsluhovan}\t{druh3.veFronteObchodu}\t{druh3.veFronteVytahu}");
             }
         }
     }
