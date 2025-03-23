@@ -926,7 +926,7 @@ namespace simulace
         {
             ModelStatistikaTriDruhu model = new ModelStatistikaTriDruhu();
             int dolniPocetZakazniku = 1;
-            Cas[][] vysledek = model.VypocitejPrumerProRozsahZakazniku(dolniPocetZakazniku, 100);
+            Cas[][] vysledek = model.VypocitejPrumerProRozsahZakazniku(dolniPocetZakazniku, 501);
             //Console.ReadLine();
             for (int i = 0; i < vysledek.Length; i++){
                 Cas druh1 = vysledek[i][1];
